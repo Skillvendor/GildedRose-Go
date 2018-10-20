@@ -2,15 +2,13 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"text/tabwriter"
 
 	gildedrose "./gilded-rose"
 )
 
-var things = []struct {
-	name    string
-	sellIn  int
-	quality int
-}{
+var items = []*gildedrose.Item{
 	{"+5 Dexterity Vest", 10, 20},
 	{"Aged Brie", 2, 0},
 	{"Elixir of the Mongoose", 5, 7},
@@ -20,17 +18,15 @@ var things = []struct {
 }
 
 func main() {
-	var items []*gildedrose.Item
-
-	for _, thing := range things {
-		item := gildedrose.New(thing.name, thing.sellIn, thing.quality)
-		items = append(items, item)
-		fmt.Println(item)
-	}
-
 	gildedrose.UpdateQuality(items...)
 
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	defer w.Flush()
+
+	fmt.Fprintln(w, "Item\tDays Left\tQuality\t")
+	fmt.Fprintln(w, "----\t---------\t-------\t")
+
 	for _, item := range items {
-		fmt.Println(item)
+		fmt.Fprintln(w, item)
 	}
 }
